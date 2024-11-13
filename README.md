@@ -1,2 +1,2 @@
 # Zoe-Lab
-Model Whisper 1 to transript speech into text  
+Model Whisper 1 to transribe speech into text  
