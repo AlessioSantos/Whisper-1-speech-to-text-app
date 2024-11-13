@@ -8,10 +8,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, Distance, VectorParams
 
 env = dotenv_values(".env")
-
-qdrant_url = st.secrets["QDRANT_URL"]
-api_key = st.secrets["API_KEY"]
-
+  
 EMBEDDING_MODEL = "text-embedding-3-large"
 EMBEDDING_DIM = 3072
 QDRANT_COLLECTION_NAME = "notes"
@@ -47,9 +44,9 @@ if not st.session_state.get("openai_api_key"):
 @st.cache_resource
 def get_qdrant_client():
     return QdrantClient(
-    url=env["QDRANT_URL"], 
-    api_key=["QDRANT_API_KEY"],
-)
+        url=env["QDRANT_URL"],
+        api_key=env["QDRANT_API_KEY"],  # Используем строку, а не список
+    )
 
 def assure_db_collection_exists():
     qdrant_client = get_qdrant_client()
