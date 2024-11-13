@@ -8,6 +8,13 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, Distance, VectorParams
 
 env = dotenv_values(".env")
+### Secrets using Streamlit Cloud Mechanism
+# https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management
+if 'QDRANT_URL' in st.secrets:
+    env['QDRANT_URL'] = st.secrets['QDRANT_URL']
+if 'QDRANT_API_KEY' in st.secrets:
+    env['QDRANT_API_KEY'] = st.secrets['QDRANT_API_KEY']
+###
 
 EMBEDDING_MODEL = "text-embedding-3-large"
 EMBEDDING_DIM = 3072
@@ -45,7 +52,7 @@ if not st.session_state.get("openai_api_key"):
 def get_qdrant_client():
     return QdrantClient(
     url=env["QDRANT_URL"], 
-    api_key=env["QDRANT_API_KEY"],
+    api_key=["QDRANT_API_KEY"],
 )
 
 def assure_db_collection_exists():
