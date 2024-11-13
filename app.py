@@ -15,7 +15,7 @@ QDRANT_COLLECTION_NAME = "notes"
 AUDIO_TRANSCRIBE_MODEL = "whisper-1"
 
 def get_openai_client():
-    return OpenAI(api_key=env["OPENAI_API_KEY"])
+    return OpenAI(api_key=st.session_state["openai_api_key"])
 
 def transcribe_audio(audio_bytes):
     openai_client = get_openai_client()
@@ -28,9 +28,25 @@ def transcribe_audio(audio_bytes):
     )
     return transcript.text
 
+if not st.session_state.get("openai_api_key"):
+    if "OPENAI_API_KEY" in env:
+        st.session_state["openai_api_key"] = env["OPENAI_API_KEY"]
+
+    else:
+        st.info("Wprowadź swój klucz API, inaczej nie skorzystasz z aplikacji")
+        st.session_state["openai_api_key"] = st.text_input("Klucz API", type="password")
+        if st.session_state["openai_api_key"]:
+            st.rerun()
+
+if not st.session_state.get("openai_api_key"):
+    st.stop()
+
 @st.cache_resource
 def get_qdrant_client():
-    return QdrantClient(path=":memory:")
+    return QdrantClient(
+    url=env["QDRANT_URL"], 
+    api_key=env["QDRANT_API_KEY"],
+)
 
 def assure_db_collection_exists():
     qdrant_client = get_qdrant_client()
